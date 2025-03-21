@@ -6,7 +6,7 @@ import { deleteRequest, getRequest } from '../../utils/api';
 import ButtonCom from '../../CommonComponent/ButtonCom';
 import Table from '../../CommonComponent/Table';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchExams } from '../../action/examActions';
+import { deleteExam, fetchExams } from '../../action/examActions';
 const tableHeader = ['Subject', 'Email', 'Notes', 'View Exam', 'Delete Exam'];
 
 const ExamList = () => {
@@ -16,7 +16,8 @@ const ExamList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // const [refetch, setRefetch] = useState(0);
-    const {exams,loading} = useSelector((state) => state.auth);
+    const examsList = useSelector((state) => state.exams);
+    const exams = examsList?.exams;
     // const [exams, setExams] = useState([]);
     // const [dataNotFound, setDataNotFound] = useState(false);
     const handleExaView = (exam) => { navigate(`/teacher/exam/${exam._id}`, { state: { subject: exam.subjectName, notes: exam.notes, id: exam._id } }); }
@@ -32,12 +33,12 @@ const ExamList = () => {
     //         }
     //     }
     // }
-     const handleExaDelete = (id) => {
-            let confirmDelete = confirm("Are you sure you want to delete this exam?");
-            if (confirmDelete) {
-                dispatch(deleteExam(id, token)); // ✅ Call delete action
-            }
-        };
+    const handleExaDelete = (id) => {
+        let confirmDelete = confirm("Are you sure you want to delete this exam?");
+        if (confirmDelete) {
+            dispatch(deleteExam(id, token)); // ✅ Call delete action
+        }
+    };
 
     // useEffect(() => {
     //     const fetchData = async () => {
@@ -53,9 +54,9 @@ const ExamList = () => {
     //     }
     //     fetchData();
     // }, [refetch]);
-       useEffect(() => {
-            dispatch(fetchExams(token)); 
-        }, [dispatch, token]);
+    useEffect(() => {
+        dispatch(fetchExams(token));
+    }, [dispatch, token]);
 
     const tableData = useMemo(() => {
         return exams?.map((val) => ({
@@ -65,7 +66,7 @@ const ExamList = () => {
             'View Exam': <ButtonCom text='View Exam' onClick={() => handleExaView(val)} color='green' />,
             'Delete Exam': <ButtonCom text='Delete Exam' onClick={() => handleExaDelete(val._id)} color='red' />
         }));
-    },[exams]);
+    }, [exams]);
     return (
         <div>
             <div style={{ maxWidth: "1100px", margin: "0px auto" }}>
